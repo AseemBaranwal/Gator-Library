@@ -11,6 +11,7 @@ RedBlackTree::RedBlackTree() {
 }
 
 void RedBlackTree::leftRotate(Node *node) {
+    // Rotate the node and its right child
     Node *y = node->right;
     node->right = y->left;
     if (y->left != nullptr) {
@@ -29,6 +30,7 @@ void RedBlackTree::leftRotate(Node *node) {
 }
 
 void RedBlackTree::rightRotate(Node *node) {
+    // Rotate the node and its left child
     Node *y = node->left;
     node->left = y->right;
     if (y->right != nullptr) {
@@ -47,6 +49,8 @@ void RedBlackTree::rightRotate(Node *node) {
 }
 
 int RedBlackTree::fixRRViolations(Node *node) {
+    // In case of Red-Red violation, we need to perform color flips and rotations
+    // Keep on adding the values in colorFlips which will be returned at the end
     int colorFlips = 0;
     while (node->parent and node->parent->isRed) {
         // If grandparent doesn't exist, then we are done
@@ -60,6 +64,7 @@ int RedBlackTree::fixRRViolations(Node *node) {
         Node *gp = pp->parent;
         if (gp->right and gp->right->isRed) {
             // Case I: XYr
+            // No rotation required, colors are flipped for the parent, grandparent and uncle
             colorFlips += pp->isRed;
             pp->isRed = false;
             colorFlips += gp->right->isRed;
@@ -80,12 +85,14 @@ int RedBlackTree::fixRRViolations(Node *node) {
                 rightRotate(gp);
             } else if (!XIsLeftChild and YIsLeftChild) {
                 // Case IIb: RLb
+                // Rotate the parent in the direction of the node
                 node = pp;
                 rightRotate(node);
                 colorFlips += node->parent->isRed;
                 node->parent->isRed = false;
                 colorFlips += !(node->parent->parent->isRed);
                 node->parent->parent->isRed = true;
+                // Rotate the grandparent in the opposite direction
                 leftRotate(node->parent->parent);
             } else if (!XIsLeftChild and !YIsLeftChild) {
                 // Case IIc: RRb
@@ -97,11 +104,13 @@ int RedBlackTree::fixRRViolations(Node *node) {
             } else {
                 // Case IId: LRb
                 node = pp;
+                // Rotate the parent in the direction of the node
                 leftRotate(node);
                 colorFlips += node->parent->isRed;
                 node->parent->isRed = false;
                 colorFlips += !(node->parent->parent->isRed);
                 node->parent->parent->isRed = true;
+                // Rotate the grandparent in the opposite direction
                 rightRotate(node->parent->parent);
             }
         }
@@ -112,6 +121,9 @@ int RedBlackTree::fixRRViolations(Node *node) {
 }
 
 int RedBlackTree::deleteNode(int key) {
+    // Deletes the node with the key present in the tree and balances the tree
+    // Calls the fixDoubleBlack function to fix the double black violation
+    // Keep on adding the values in colorFlips which will be returned at the end
     int colorFlips = 0;
     Node *node = search(key);
     if (node == nullptr) {
@@ -287,6 +299,7 @@ int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
 }
 
 void RedBlackTree::inorderTraversal(Node *node, std::vector<Node *> &res, int start, int end) {
+    // Inorder traversal of the tree (Left, Root, Right)
     if (node == nullptr) {
         return;
     }
@@ -300,8 +313,10 @@ void RedBlackTree::inorderTraversal(Node *node, std::vector<Node *> &res, int st
 }
 
 int RedBlackTree::insertBook(Node *newNode) {
+    // Inserts the node in the tree and balances the tree
+    // Keep on adding the values in colorFlips which will be returned at the end
     int colorFlips = 0;
-    if(!root){
+    if (!root) {
         root = newNode;
         root->isRed = false;
         return 0;
@@ -330,10 +345,14 @@ int RedBlackTree::insertBook(Node *newNode) {
 }
 
 int RedBlackTree::deleteBookWithKey(int key) {
+    // Deletes the node with the key present in the tree and balances the tree
+    // Uses the utility function deleteNode which returns the number of flipCount
     return deleteNode(key);
 }
 
 Node *RedBlackTree::search(int key) const {
+    // Searches the node with the key present in the tree
+    // Returns the node if found, else returns nullptr
     Node *node = root;
     while (node != nullptr) {
         if (key == node->book->bookID) {
@@ -352,6 +371,7 @@ void RedBlackTree::printBook(Node *node) {
 }
 
 void RedBlackTree::printBooks(int bookID1, int bookID2) {
+    // Prints all the books in the range [bookID1, bookID2] both inclusive
     std::vector<Node *> books;
     inorderTraversal(root, books, bookID1, bookID2);
     for (Node *currBook: books) {
@@ -360,6 +380,8 @@ void RedBlackTree::printBooks(int bookID1, int bookID2) {
 }
 
 void RedBlackTree::preorder(Node *node) {
+    // Preorder traversal of the tree (Root, Left, Right)
+    // Note: This is just for debugging purposes
     if (node == nullptr) {
         std::cout << "NULL ";
         return;
