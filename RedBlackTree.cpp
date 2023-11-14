@@ -210,7 +210,7 @@ int RedBlackTree::deleteNode(int key) {
 
 int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
     int flipCount = 0;
-    while (child != root and child->isRed == 0) {
+    while (child and child != root and child->isRed == 0) {
         if (child == parent->left) {
             Node *sibling = parent->right;
             if (sibling and sibling->isRed) {

@@ -52,7 +52,7 @@ int GatorLibrary::findSmallestGreater(vector<Node *> &books, int bookID) {
 void GatorLibrary::PrintBook(int bookID) const {
     Node *currBook = redBlackTree->search(bookID);
     if (currBook == nullptr) {
-        cout << "BookID not found in the Library" << endl;
+        cout << "Book " << bookID << " not found in the library" << endl << endl;
         return;
     }
     RedBlackTree::printBook(currBook);
@@ -79,14 +79,14 @@ void GatorLibrary::InsertBook(int bookID, const string& bookName, string authorN
 void GatorLibrary::BorrowBook(int patronID, int bookID, int patronPriority) const {
     Node *bookNode = redBlackTree->search(bookID);
     if (bookNode == nullptr) {
-        cout << "BookID not found in the Library" << endl;
+        cout << "Book " << bookID << " not found in the library" << endl << endl;
+        return;
+    }
+    if (bookNode->book->borrowerID == patronID) {
+        cout << "Book " << bookID << " Reserved by Patron " << patronID << endl << endl;
         return;
     }
     if (!bookNode->book->isAvailable) {
-        if (bookNode->book->borrowerID == patronID) {
-            cout << "Patron already borrowed the book" << endl;
-            return;
-        }
         if (bookNode->minHeap->userIDToIndex.find(patronID) != bookNode->minHeap->userIDToIndex.end()) {
             cout << "Patron already in the waitlist" << endl;
             return;
@@ -103,7 +103,7 @@ void GatorLibrary::BorrowBook(int patronID, int bookID, int patronPriority) cons
 void GatorLibrary::ReturnBook(int patronID, int bookID) const {
     Node *bookNode = redBlackTree->search(bookID);
     if (bookNode == nullptr) {
-        cout << "BookID not found in the Library" << endl;
+        cout << "Book " << bookID << " not found in the library" << endl << endl;
         return;
     }
     if (bookNode->book->isAvailable) {
@@ -121,25 +121,32 @@ void GatorLibrary::ReturnBook(int patronID, int bookID) const {
         return;
     }
     int borrowerID = bookNode->minHeap->deleteReservation();
+    bookNode->book->borrowerID = borrowerID;
+    bookNode->book->isAvailable = false;
     cout << "Book " << bookID << " Allotted to Patron " << borrowerID << endl << endl;
 }
 
 void GatorLibrary::DeleteBook(int bookID) {
     Node *bookNode = redBlackTree->search(bookID);
     if (bookNode == nullptr) {
-        cout << "Book not found in the Library" << endl;
+        cout << "Book not found in the Library" << endl << endl;
         return;
     }
     cout << "Book " << bookID << " is no longer available. ";
-    if (!bookNode->book->isAvailable) {
-        cout << endl;
-        return;
+    if(!bookNode->minHeap->heap.empty()) {
+        // At least Someone has borrowed the book
+        string reservations = bookNode->minHeap->heap.size() > 1 ? "Reservations" : "Reservation";
+        string patrons = bookNode->minHeap->heap.size() > 1 ? "patrons " : "patron ";
+        string hasHave = bookNode->minHeap->heap.size() > 1 ? " have" : " has";
+        cout << reservations << " made by " << patrons;
+        for (int i = 0; i < (int)bookNode->minHeap->heap.size() - 1; i++) {
+            cout << bookNode->minHeap->heap[i]->userID << ", ";
+        }
+        cout << bookNode->minHeap->heap.back()->userID << hasHave << " been cancelled!" << endl << endl;
+    } else {
+        // There are no reservations
+        cout << endl << endl;
     }
-    cout << "Reservations made by Patrons ";
-    for (int i = 0; i < bookNode->minHeap->heap.size() - 1; i++) {
-        cout << bookNode->minHeap->heap[i]->userID << ", ";
-    }
-    cout << bookNode->minHeap->heap.back()->userID << " have been cancelled!" << endl << endl;
     flipCount += redBlackTree->deleteBookWithKey(bookID);
 }
 
@@ -293,5 +300,4 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
-
 }
