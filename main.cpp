@@ -221,8 +221,16 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Create the output file name
+    string outputFileName = argv[1] + string("_output_file.txt");
+    fstream fout(outputFileName, ios::out);
+    if (!fout) {
+        cout << "Error creating output file" << endl;
+        return 1;
+    }
+
     // Redirect cout to output file
-//    cout.rdbuf(fout.rdbuf());
+    cout.rdbuf(fout.rdbuf());
 
     string line;
     while (getline(fin, line)) {

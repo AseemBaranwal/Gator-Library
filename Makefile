@@ -31,7 +31,7 @@ $(EXECUTABLE): $(OBJS)
 
 # Target to clean up generated files
 clean:
-	rm -f *.o output_file.txt GatorLibrary
+	rm -f *.o *_output_file.txt GatorLibrary
 
 # Target to run the executable
 run: $(EXECUTABLE)
