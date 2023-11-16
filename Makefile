@@ -23,7 +23,6 @@ OBJS = $(SRCS:.cpp=.o)
 # Target for the main executable
 $(EXECUTABLE): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o GatorLibrary
-	./GatorLibrary input.txt
 
 # Target for each object file
 %.o: %.cpp
@@ -36,4 +35,4 @@ clean:
 # Target to run the executable
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
-	$(MAKE) clean  # Automatically clean up after running the executable
+	$(MAKE) clean
