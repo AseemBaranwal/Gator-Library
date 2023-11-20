@@ -134,6 +134,7 @@ int RedBlackTree::deleteNode(int key) {
     Node *child, *parent;
     bool isRed;
 
+    // Deleted Node is a leaf node, if black node, fixup required as the number of black nodes in the path is reduced
     if (node->left != nullptr and node->right != nullptr) {
         Node *replace = node;
         replace = replace->right;
@@ -141,6 +142,7 @@ int RedBlackTree::deleteNode(int key) {
             replace = replace->left;
         }
 
+        // Replace the node with the new replace node
         if (node->parent != nullptr) {
             if (node->parent->left == node) {
                 node->parent->left = replace;
@@ -151,6 +153,7 @@ int RedBlackTree::deleteNode(int key) {
             root = replace;
         }
 
+        // Update the child and parent pointers
         child = replace->right;
         parent = replace->parent;
         isRed = replace->isRed;
@@ -166,6 +169,7 @@ int RedBlackTree::deleteNode(int key) {
             node->right->parent = replace;
         }
 
+        // Replace the node with the replace node
         replace->parent = node->parent;
         colorFlips += (replace->isRed != node->isRed);
         replace->isRed = node->isRed;
@@ -184,14 +188,17 @@ int RedBlackTree::deleteNode(int key) {
         return colorFlips;
     }
 
+    // Deleted Node has only one child
     if (node->left != nullptr) {
         child = node->left;
     } else {
         child = node->right;
     }
 
+    // Deleted Node is the root node
     parent = node->parent;
     isRed = node->isRed;
+
 
     if (child != nullptr) {
         child->parent = parent;
@@ -207,6 +214,7 @@ int RedBlackTree::deleteNode(int key) {
         root = child;
     }
 
+    // If the deleted node is black, then we need to fix the double black violation
     if (!isRed) {
         colorFlips += fixDoubleBlack(child, parent);
     } else {
@@ -216,6 +224,7 @@ int RedBlackTree::deleteNode(int key) {
         }
     }
 
+    // Delete the node
     delete node;
     return colorFlips;
 }
@@ -223,9 +232,13 @@ int RedBlackTree::deleteNode(int key) {
 int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
     int flipCount = 0;
     while (child and child != root and child->isRed == 0) {
+        // If the child is the root node, then we are done
         if (child == parent->left) {
+            // Left node of the parent
             Node *sibling = parent->right;
             if (sibling and sibling->isRed) {
+                // If the sibling is red, then we need to perform rotations and color flips
+                // Perform left rotation on the parent
                 flipCount += sibling->isRed;
                 sibling->isRed = false;
                 flipCount += parent->isRed;
@@ -233,6 +246,7 @@ int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
                 leftRotate(parent);
                 sibling = parent->right;
             }
+            // If the sibling is black and both the children of the sibling are black
             if (sibling->left->isRed == 0 and sibling->right->isRed == 0) {
                 flipCount += !(sibling->isRed);
                 sibling->isRed = true;
@@ -257,6 +271,7 @@ int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
                 child = root;
             }
         } else {
+            // If the child is the root node, then we are done
             Node *sibling = parent->left;
             if (sibling and sibling->isRed) {
                 flipCount += sibling->isRed;
@@ -266,12 +281,14 @@ int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
                 rightRotate(parent);
                 sibling = parent->left;
             }
+            // If the sibling is black and both the children of the sibling are black
             if (sibling->left->isRed == 0 and sibling->right->isRed == 0) {
                 flipCount += !(sibling->isRed);
                 sibling->isRed = true;
                 child = parent;
                 parent = child->parent;
             } else {
+                // If the sibling is black and the left child of the sibling is red
                 if (sibling->left->isRed == 0) {
                     flipCount += sibling->right->isRed;
                     sibling->right->isRed = false;
@@ -280,6 +297,7 @@ int RedBlackTree::fixDoubleBlack(Node *child, Node *parent) {
                     leftRotate(sibling);
                     sibling = parent->left;
                 }
+                // If the sibling is black and the right child of the sibling is red
                 flipCount += (sibling->isRed != parent->isRed);
                 sibling->isRed = parent->isRed;
                 flipCount += parent->isRed;
