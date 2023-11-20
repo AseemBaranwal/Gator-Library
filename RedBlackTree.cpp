@@ -225,6 +225,7 @@ int RedBlackTree::deleteNode(int key) {
     }
 
     // Delete the node
+    delete node->minHeap;
     delete node;
     return colorFlips;
 }
