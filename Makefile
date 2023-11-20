@@ -22,7 +22,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 # Target for the main executable
 $(EXECUTABLE): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o GatorLibrary
+	$(CXX) $(CXXFLAGS) $^ -o gatorLibrary
 
 # Target for each object file
 %.o: %.cpp
@@ -30,7 +30,7 @@ $(EXECUTABLE): $(OBJS)
 
 # Target to clean up generated files
 clean:
-	rm -f *.o *_output_file.txt GatorLibrary
+	rm -f *.o *_output_file.txt gatorLibrary
 
 # Target to run the executable
 run: $(EXECUTABLE)
