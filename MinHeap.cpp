@@ -30,13 +30,13 @@ void MinHeap::heapifyUp(int idx) {
 
 void MinHeap::heapifyDown(int idx) {
     int minIdx = idx;
-    if (leftChild(idx) < heap.size() and
+    if (leftChild(idx) < (int)heap.size() and
         (heap[leftChild(idx)]->priority < heap[minIdx]->priority or
          (heap[leftChild(idx)]->priority == heap[minIdx]->priority and
           heap[leftChild(idx)]->timestamp < heap[minIdx]->timestamp))) {
         minIdx = leftChild(idx);
     }
-    if (rightChild(idx) < heap.size() and
+    if (rightChild(idx) < (int)heap.size() and
         (heap[rightChild(idx)]->priority < heap[minIdx]->priority or
          (heap[rightChild(idx)]->priority == heap[minIdx]->priority and
           heap[rightChild(idx)]->timestamp < heap[minIdx]->timestamp))) {

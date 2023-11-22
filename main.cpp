@@ -181,7 +181,7 @@ void GatorLibrary::FindClosestBook(int bookID) const {
     int idx = findSmallestGreater(books, bookID);
     if (idx == -1) {
         PrintBook(0);
-    } else if (idx == books.size()) {
+    } else if (idx == (int)books.size()) {
         PrintBook(books.back()->book->bookID);
     } else {
         if (bookID - books[idx - 1]->book->bookID == books[idx]->book->bookID - bookID) {
@@ -222,7 +222,8 @@ int main(int argc, char **argv) {
     }
 
     // Create the output file name
-    string outputFileName = argv[1] + string("_output_file.txt");
+    string inputFileName = argv[1];
+    string outputFileName = inputFileName.substr(0, inputFileName.size()-4) + string("_output_file.txt");
     fstream fout(outputFileName, ios::out);
     if (!fout) {
         cout << "Error creating output file" << endl;
@@ -328,4 +329,6 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
+    // Uncomment this line to show the tree shape and color of the nodes
+//    gatorLibrary->redBlackTree->preorder(gatorLibrary->redBlackTree->root);
 }

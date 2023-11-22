@@ -23,7 +23,7 @@ void Node::printBook() {
               << std::endl;
     std::cout << "Reservations = [";
     if (!this->minHeap->heap.empty()) {
-        for (int j = 0; j < this->minHeap->heap.size() - 1; j++) {
+        for (int j = 0; j < (int)this->minHeap->heap.size() - 1; j++) {
             std::cout << (this->minHeap->heap[j]->userID) << ", ";
         }
         std::cout << (this->minHeap->heap.back()->userID);
